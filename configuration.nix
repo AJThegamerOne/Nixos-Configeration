@@ -227,14 +227,18 @@
     ghostty # GPU-accelerated terminal
     (nerd-fonts.hack) # Nerd Font for terminal icons (fastfetch, starship)
 
-    # One-command system update: refresh flake inputs and rebuild.
+    # One-command system update: refresh flake inputs, rebuild, then push the
+    # resulting flake/config changes to GitHub.
     (writeShellScriptBin "nixos-update" ''
       set -e
       echo "==> Updating NixOS flake inputs..."
       sudo nix flake update --flake /etc/nixos
       echo "==> Rebuilding and switching..."
       sudo nixos-rebuild switch --flake /etc/nixos#nixos
-      echo "==> Done. NixOS is up to date."
+      echo "==> Pushing flake/config changes to GitHub..."
+      sudo -v
+      nixos-push "chore: nixos-update $(date +%Y-%m-%d)"
+      echo "==> Done. NixOS and GitHub are up to date."
     '')
     (writeShellScriptBin "nixos-push" ''
       set -e

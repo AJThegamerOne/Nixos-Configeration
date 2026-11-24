@@ -189,8 +189,8 @@ Existing files are saved as `<file>.bak.<timestamp>` before being replaced. Afte
 
 | Command | What it does |
 | --- | --- |
-| `nixos-update` | Update flake inputs and rebuild/switch in one go |
-| `nixos-push "message"` | Stage, commit, and push changes to GitHub |
+| `nixos-update` | Update flake inputs, rebuild/switch, then commit and push to GitHub |
+| `nixos-push "message"` | Stage, commit, and push changes manually |
 | `sudo nixos-rebuild switch --flake /etc/nixos#nixos` | Rebuild after editing config |
 
 Manual equivalent of `nixos-update`:
@@ -198,9 +198,10 @@ Manual equivalent of `nixos-update`:
 ```sh
 sudo nix flake update --flake /etc/nixos
 sudo nixos-rebuild switch --flake /etc/nixos#nixos
+nixos-push "chore: nixos-update $(date +%Y-%m-%d)"
 ```
 
-`nixos-push` uses your `gh auth login` session for authentication.
+`nixos-update` pushes automatically with a dated commit message. `nixos-push` uses your `gh auth login` session for authentication.
 
 ---
 
