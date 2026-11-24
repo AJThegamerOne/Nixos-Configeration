@@ -30,7 +30,7 @@
 | 💬 **Apps** | Discord with Vencord baked in via overlay, Ghostty, fastfetch, Git, Prism Launcher, Lunar Client, Zoom, OpenCode |
 | 📦 **Extras** | Flatpak with Nightcap, Vice instant replay, `nix-index-database` for `comma`/`nix-locate`, `nix-ld` |
 | ⌨️ **Terminal** | Ghostty on **TokyoNight Storm** with **Hack Nerd Font**; `fastfetch` launches automatically with every interactive shell |
-| 🗂️ **Dotfiles** | Ready-to-copy fastfetch, Ghostty, Konsole, and zsh configs in [`dotfiles/`](dotfiles/) |
+| 🗂️ **Dotfiles** | Ready-to-copy fastfetch, Ghostty, Konsole, KDE Plasma (including the TokyoNight color scheme), and zsh configs in [`dotfiles/`](dotfiles/) |
 
 Built declaratively with flakes: pinned inputs in [`flake.lock`](flake.lock), machine config in [`configuration.nix`](configuration.nix).
 
@@ -77,11 +77,14 @@ Built declaratively with flakes: pinned inputs in [`flake.lock`](flake.lock), ma
    ```sh
    cp -r dotfiles/fastfetch/* ~/.config/fastfetch/
    cp -r dotfiles/ghostty/* ~/.config/ghostty/
-   mkdir -p ~/.local/share/konsole
+   mkdir -p ~/.local/share/konsole ~/.local/share/color-schemes
    cp dotfiles/konsole/* ~/.local/share/konsole/
    cp dotfiles/konsole/konsolerc ~/.config/konsolerc
+   cp dotfiles/kde/k* dotfiles/kde/plasma* ~/.config/
+   cp dotfiles/kde/color-schemes/TokyoNight.colors ~/.local/share/color-schemes/
    cp dotfiles/zshrc ~/.zshrc
    fc-cache -f
+   kbuildsycoca6 --noincremental
    ```
 
 ---
@@ -109,18 +112,19 @@ sudo nixos-rebuild switch --flake /etc/nixos#nixos
 
 ```text
 .
-├── flake.nix                 # flake inputs and nixosConfigurations
-├── flake.lock                # pinned input revisions
-├── configuration.nix         # the main system config
-├── hardware-configuration.nix# generated disk/CPU config
+├── flake.nix                  # flake inputs and nixosConfigurations
+├── flake.lock                 # pinned input revisions
+├── configuration.nix          # the main system config
+├── hardware-configuration.nix # generated disk/CPU config
 ├── pkgs/
-│   ├── helium.nix            # Helium AppImage + Widevine CDM
-│   └── zuno.nix              # Zuno AppImage
+│   ├── helium.nix             # Helium AppImage + Widevine CDM
+│   └── zuno.nix               # Zuno AppImage
 ├── dotfiles/
-│   ├── fastfetch/            # config + NixOS logo
-│   ├── ghostty/              # TokyoNight Storm config
-│   ├── konsole/              # Nerd Font profile
-│   └── zshrc                 # fastfetch on shell startup
+│   ├── fastfetch/             # config + NixOS logo
+│   ├── ghostty/               # TokyoNight Storm config
+│   ├── konsole/               # Nerd Font profile
+│   ├── kde/                   # Plasma config + TokyoNight color scheme
+│   └── zshrc                  # fastfetch on shell startup
 └── README.md
 ```
 
@@ -134,6 +138,7 @@ sudo nixos-rebuild switch --flake /etc/nixos#nixos
 - Helium's Widevine CDM is symlinked from nixpkgs `widevine-cdm` (the one Google Chrome uses).
 - The CachyOS binary cache (`cache.lantian.pub/lantian`) is configured in `configuration.nix`.
 - After adding/removing packages that provide `.desktop` files, refresh the KDE launcher cache with `kbuildsycoca6 --noincremental`.
+- KDE dotfiles contain layout, themes, and shortcuts only — no wallet, mail, or SSH config is committed.
 
 ---
 

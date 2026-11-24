@@ -1,0 +1,6 @@
+[Applications][firefox]
+Seen=true
+
+[DoNotDisturb]
+NotificationSoundsMuted=true
+Until=2027,11,24,12,57,58.354
