@@ -95,7 +95,52 @@
     description = "AJ";
     extraGroups = [ "networkmanager" "wheel" "video" "input" ];
     initialPassword = "changeme"; # change after first login: passwd
+    shell = pkgs.zsh;
   };
+
+  # --- Shell -------------------------------------------------------------------
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+    interactiveShellInit = ''
+      # Friendly nix wrappers (pacman/paru-like shortcuts)
+      nix() {
+        if [[ "$1" == "search" ]]; then
+          shift
+          if [[ $# -eq 0 ]]; then
+            command nix search --help
+            return 1
+          fi
+          # default to nixpkgs when no flake ref is given
+          if [[ "$1" == "nixpkgs" || "$1" == *"#"* || "$1" == *":"* || "$1" == .* || "$1" == /* ]]; then
+            command nix search "$@"
+          else
+            command nix search nixpkgs "$@"
+          fi
+        elif [[ "$1" == "install" ]]; then
+          shift
+          if [[ $# -eq 0 ]]; then
+            echo "Usage: nix install <pkg> [<pkg>...]"
+            return 1
+          fi
+          local pkgs=()
+          for p in "$@"; do
+            if [[ "$p" == *"#"* || "$p" == *":"* ]]; then
+              pkgs+=("$p")
+            else
+              pkgs+=("nixpkgs#$p")
+            fi
+          done
+          command nix profile install "''${pkgs[@]}"
+        else
+          command nix "$@"
+        fi
+      }
+    '';
+  };
+  programs.starship.enable = true;
 
   # --- Nix settings -------------------------------------------------------------
   nixpkgs.config.allowUnfree = true; # steam, discord, lunar-client, zoom
