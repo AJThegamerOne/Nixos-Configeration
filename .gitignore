@@ -1,0 +1,33 @@
+# secrets - never commit
+/secrets/
+secrets.nix
+*.age
+/*.key
+*.secret
+*.token
+.env
+.env.*
+
+# local migration outputs / backups
+/scripts/migration-output/
+/scripts/*.local.sh
+
+# nix build / VM artifacts
+/result
+/result-*
+*.qcow2
+.session
+
+# secret tooling artifacts (if ever used) - never commit key material
+.gitsecret/keys/random_seed
+
+# OS/editor noise
+.DS_Store
+.direnv
+*.swp
+*~
+
+# local editor/config backup files
+*.bak
+*.backup-*
+*.hm-bak.stale-*
