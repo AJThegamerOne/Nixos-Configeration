@@ -135,6 +135,7 @@
     lutris
     faugus-launcher # Windows games via UMU-Launcher
     (callPackage ./pkgs/helium.nix { }) # Helium browser (official AppImage)
+    (callPackage ./pkgs/zuno.nix { }) # Zuno YouTube Music desktop client (official AppImage)
     discord
     prismlauncher # Minecraft
     lunar-client # Minecraft PvP client

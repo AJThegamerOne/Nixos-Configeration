@@ -11,7 +11,7 @@ Gaming-focused NixOS setup with the CachyOS kernel, KDE Plasma 6, and Steam/Prot
 - **Audio**: PipeWire (Pulse/ALSA/JACK, 32-bit ALSA), higher-quality resampling, RTKit
 - **Hardware**: AMD CPU microcode, redistributable firmware, 32-bit graphics, Steam hardware udev rules, Bluetooth, fwupd, fstrim
 - **QoL**: Nix flakes/command enabled, auto store optimise, weekly GC, `nix-ld`, Wayland Ozone for Electron apps
-- **Apps**: Helium browser, Discord, Prism Launcher, Lunar Client, Zoom, OpenCode
+- **Apps**: Helium browser, Zuno (YouTube Music), Discord, Prism Launcher, Lunar Client, Zoom, OpenCode
 - **Vice**: instant-replay clipper via upstream flake module
 
 ## Quick install
