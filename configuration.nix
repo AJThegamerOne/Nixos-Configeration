@@ -228,6 +228,7 @@
     prismlauncher # Minecraft
     lunar-client # Minecraft PvP client
     protonplus # Proton-GE / Wine-GE manager
+    wineWow64Packages.staging # Wine Staging (64-bit WoW64)
     mangohud # FPS/frame-time overlay for Vulkan/OpenGL games
     goverlay # GUI for MangoHud/GameMode/vkBasalt config
     opencode # AI coding agent
