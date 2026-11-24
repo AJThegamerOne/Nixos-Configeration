@@ -7,6 +7,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.configurationLimit = 10;
+  boot.supportedFilesystems = [ "ntfs" ]; # NTFS3 support
 
   # CachyOS BORE kernel, x86_64-v3 optimized for Ryzen 5800X3D (Zen 3).
   # Other variants from the flake, e.g.:
@@ -66,6 +67,10 @@
   hardware.graphics = {
     enable = true;
     enable32Bit = true; # 32-bit Vulkan/OpenGL for Steam/Proton games
+    extraPackages = with pkgs; [
+      libva
+      libvdpau-va-gl
+    ];
   };
   hardware.steam-hardware.enable = true; # udev rules for Steam controllers/VR devices
   # NVIDIA GPU? Uncomment (open module works on Turing / RTX 20xx and newer):
@@ -109,10 +114,14 @@
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
   hardware.bluetooth.settings.General.Experimental = true; # better BT codec/device compatibility
-  services.fstrim.enable = true;
   services.fwupd.enable = true;
   zramSwap.enable = true;
   programs.nix-ld.enable = true; # run unpackaged binaries more easily
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
+  programs.obs-studio.enable = true;
   environment.sessionVariables.NIXOS_OZONE_WL = "1"; # Wayland-native Electron apps where supported
 
   # --- Gaming ---------------------------------------------------------------------
@@ -147,5 +156,5 @@
   ];
 
   # Set once at install time; do not change after installing.
-  system.stateVersion = "26.05";
+  system.stateVersion = "26.11";
 }
