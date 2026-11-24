@@ -15,6 +15,10 @@
   #   linuxPackages-cachyos-bore-lto-x86_64-v3  (CPU-optimized, needs a modern CPU)
   # Full list: https://github.com/xddxdd/nix-cachyos-kernel
   boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore;
+  boot.kernelModules = [ "ntsync" ]; # Wine/Proton NT synchronization (faster Windows games)
+
+  # Gaming/performance tuning
+  boot.kernel.sysctl."vm.max_map_count" = 2147483642; # Proton/Wine/esync games need high map count
 
   # --- Networking ------------------------------------------------------------
   networking.hostName = "nixos"; # pick your hostname
@@ -44,6 +48,7 @@
 
   # --- CPU / Graphics ----------------------------------------------------------
   hardware.cpu.amd.updateMicrocode = true; # Ryzen 7 5800X3D
+  hardware.enableRedistributableFirmware = true; # extra firmware blobs (Wi-Fi/BT/etc.)
 
   # AMD GPU (RX 9060 XT): mesa/RADV drivers are included automatically,
   # nothing extra needed. The NVIDIA section below stays commented out.
@@ -51,6 +56,7 @@
     enable = true;
     enable32Bit = true; # 32-bit Vulkan/OpenGL for Steam/Proton games
   };
+  hardware.steam-hardware.enable = true; # udev rules for Steam controllers/VR devices
   # NVIDIA GPU? Uncomment (open module works on Turing / RTX 20xx and newer):
   # services.xserver.videoDrivers = [ "nvidia" ];
   # hardware.nvidia = {
@@ -85,7 +91,13 @@
   # --- Gaming ---------------------------------------------------------------------
   programs.steam = {
     enable = true;
+    remotePlay.openFirewall = true; # open ports for Steam Remote Play
+    dedicatedServer.openFirewall = true; # open ports for Source Dedicated Server
     gamescopeSession.enable = true; # optional "SteamOS-like" gamescope session
+  };
+  programs.gamescope = {
+    enable = true;
+    capSysNice = true; # lets gamescope request higher priority for smoother frame pacing
   };
   programs.gamemode.enable = true;
 
@@ -100,6 +112,8 @@
     prismlauncher # Minecraft
     lunar-client # Minecraft PvP client
     protonplus # Proton-GE / Wine-GE manager
+    mangohud # FPS/frame-time overlay for Vulkan/OpenGL games
+    goverlay # GUI for MangoHud/GameMode/vkBasalt config
     zoom-us
   ];
 
