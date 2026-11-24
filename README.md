@@ -85,6 +85,16 @@ sudo nix flake update --flake /etc/nixos
 sudo nixos-rebuild switch --flake /etc/nixos#nixos
 ```
 
+## Push changes to GitHub
+
+After editing files under `/etc/nixos`, commit and push in one step:
+
+```sh
+nixos-push "describe your change"
+```
+
+It stages all changes, commits them, and pushes `main` to GitHub using your `gh auth login` session.
+
 ## Notes
 
 - `hardware-configuration.nix` in this repo is from the original machine — replace it with your generated one before installing on different hardware.
