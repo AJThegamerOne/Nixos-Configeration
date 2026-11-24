@@ -6,15 +6,16 @@
   # --- Boot (UEFI) -----------------------------------------------------------
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.systemd-boot.configurationLimit = 10;
 
-  # CachyOS kernel with the BORE scheduler (same as CachyOS's default kernel).
+  # CachyOS BORE kernel, x86_64-v3 optimized for Ryzen 5800X3D (Zen 3).
   # Other variants from the flake, e.g.:
+  #   linuxPackages-cachyos-bore            (BORE scheduler, generic x86_64)
   #   linuxPackages-cachyos-latest          (latest mainline, EEVDF)
   #   linuxPackages-cachyos-lts             (LTS)
-  #   linuxPackages-cachyos-bore-lto        (Clang + ThinLTO)
-  #   linuxPackages-cachyos-bore-lto-x86_64-v3  (CPU-optimized, needs a modern CPU)
+  #   linuxPackages-cachyos-bore-lto-x86_64-v3  (Clang + ThinLTO, may take longer if uncached)
   # Full list: https://github.com/xddxdd/nix-cachyos-kernel
-  boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore;
+  boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-x86_64-v3;
   boot.kernelModules = [ "ntsync" ]; # Wine/Proton NT synchronization (faster Windows games)
 
   # Gaming/performance tuning
@@ -44,6 +45,16 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    jack.enable = true;
+    extraConfig.pipewire."10-audio-quality" = {
+      "context.properties" = {
+        "default.clock.rate" = 48000;
+        "default.clock.allowed-rates" = [ 44100 48000 88200 96000 ];
+      };
+      "stream.properties" = {
+        "resample.quality" = 10;
+      };
+    };
   };
 
   # --- CPU / Graphics ----------------------------------------------------------
@@ -78,6 +89,7 @@
 
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
+    auto-optimise-store = true;
     substituters = [
       "https://cache.nixos.org"
       "https://cache.lantian.pub/lantian" # prebuilt CachyOS kernels
@@ -87,6 +99,21 @@
       "lantian:WVGO7vsRMSEN+h7Lp7kv6SAmrkEXgUGbbXm7jMDjBuQ="
     ];
   };
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 14d";
+  };
+
+  # --- System QoL -------------------------------------------------------------
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  hardware.bluetooth.settings.General.Experimental = true; # better BT codec/device compatibility
+  services.fstrim.enable = true;
+  services.fwupd.enable = true;
+  zramSwap.enable = true;
+  programs.nix-ld.enable = true; # run unpackaged binaries more easily
+  environment.sessionVariables.NIXOS_OZONE_WL = "1"; # Wayland-native Electron apps where supported
 
   # --- Gaming ---------------------------------------------------------------------
   programs.steam = {
@@ -114,6 +141,7 @@
     protonplus # Proton-GE / Wine-GE manager
     mangohud # FPS/frame-time overlay for Vulkan/OpenGL games
     goverlay # GUI for MangoHud/GameMode/vkBasalt config
+    opencode # AI coding agent
     zoom-us
   ];
 

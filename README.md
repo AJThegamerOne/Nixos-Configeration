@@ -4,12 +4,14 @@ Gaming-focused NixOS setup with the CachyOS kernel, KDE Plasma 6, and Steam/Prot
 
 ## What's included
 
-- **CachyOS kernel (BORE)** via `xddxdd/nix-cachyos-kernel` with Lantian binary cache
+- **CachyOS kernel (BORE, x86_64-v3)** via `xddxdd/nix-cachyos-kernel` with Lantian binary cache, tuned for Ryzen 5800X3D
 - **KDE Plasma 6** + SDDM (GNOME swap commented in `configuration.nix`)
 - **Gaming**: Steam (Remote Play/firewall ports, Gamescope session), Gamemode, Gamescope (`capSysNice`), MangoHud, Goverlay, Lutris, Faugus Launcher, ProtonPlus, Proton-GE
-- **Performance**: `ntsync` kernel module, `vm.max_map_count` tuned for Proton/Wine
-- **Hardware**: AMD CPU microcode, redistributable firmware, 32-bit graphics, Steam hardware udev rules
-- **Apps**: Helium browser, Discord, Prism Launcher, Lunar Client, Zoom
+- **Performance**: `ntsync` kernel module, `vm.max_map_count` tuned for Proton/Wine, zram swap
+- **Audio**: PipeWire (Pulse/ALSA/JACK, 32-bit ALSA), higher-quality resampling, RTKit
+- **Hardware**: AMD CPU microcode, redistributable firmware, 32-bit graphics, Steam hardware udev rules, Bluetooth, fwupd, fstrim
+- **QoL**: Nix flakes/command enabled, auto store optimise, weekly GC, `nix-ld`, Wayland Ozone for Electron apps
+- **Apps**: Helium browser, Discord, Prism Launcher, Lunar Client, Zoom, OpenCode
 - **Vice**: instant-replay clipper via upstream flake module
 
 ## Quick install
