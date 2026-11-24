@@ -11,7 +11,7 @@
 [![Last commit](https://img.shields.io/github/last-commit/AJThegamerOne/Nixos-Configeration)](https://github.com/AJThegamerOne/Nixos-Configeration/commits/main)
 [![Stars](https://img.shields.io/github/stars/AJThegamerOne/Nixos-Configeration?style=social)](https://github.com/AJThegamerOne/Nixos-Configeration/stargazers)
 
-[Features](#-features) · [Install](#-install) · [Everyday commands](#-everyday-commands) · [Repo layout](#-repo-layout) · [Notes](#-notes)
+[Features](#-features) · [Clean install](#-clean-install) · [Dotfiles](#-dotfiles) · [Move to a new machine](#-move-to-a-new-machine) · [Everyday commands](#-everyday-commands) · [Repo layout](#-repo-layout) · [Notes](#-notes)
 
 </div>
 
@@ -30,61 +30,150 @@
 | 💬 **Apps** | Discord with Vencord baked in via overlay, Ghostty, fastfetch, Git, Prism Launcher, Lunar Client, Zoom, OpenCode |
 | 📦 **Extras** | Flatpak with Nightcap, Vice instant replay, `nix-index-database` for `comma`/`nix-locate`, `nix-ld` |
 | ⌨️ **Terminal** | Ghostty on **TokyoNight Storm** with **Hack Nerd Font**; `fastfetch` launches automatically with every interactive shell |
-| 🗂️ **Dotfiles** | Ready-to-copy fastfetch, Ghostty, Konsole, KDE Plasma (including the TokyoNight color scheme), and zsh configs in [`dotfiles/`](dotfiles/) |
+| 🗂️ **Dotfiles** | fastfetch, Ghostty, Konsole, KDE Plasma (incl. TokyoNight color scheme) and zsh configs — installed with one script |
 
 Built declaratively with flakes: pinned inputs in [`flake.lock`](flake.lock), machine config in [`configuration.nix`](configuration.nix).
 
 ---
 
-## 🚀 Install
+## 🚀 Clean install
 
-1. Boot the NixOS installer, partition/mount your disks under `/mnt`, and generate hardware config:
+> What you need: a NixOS installer USB, an internet connection, and a disk you're happy to wipe.
 
+### 1. Boot the installer and mount your disks
+
+Partition and mount your target disks under `/mnt`. For the reference UEFI + Btrfs layout:
+
+```sh
+mount /dev/disk/by-uuid/YOUR-ROOT-UUID /mnt
+mount /dev/disk/by-uuid/YOUR-BOOT-UUID /mnt/boot
+mount -o subvol=nix /dev/disk/by-uuid/YOUR-ROOT-UUID /mnt/nix
+mount -o subvol=home /dev/disk/by-uuid/YOUR-ROOT-UUID /mnt/home
+swapon /dev/disk/by-uuid/YOUR-SWAP-UUID   # if using a swap partition
+```
+
+### 2. Generate a hardware config for this machine
+
+```sh
+nixos-generate-config --root /mnt
+```
+
+This writes `/mnt/etc/nixos/hardware-configuration.nix` — it detects disks, CPU microcode and kernel modules.
+
+### 3. Clone this repo into `/mnt/etc/nixos`
+
+```sh
+mkdir -p /mnt/etc
+git clone https://github.com/AJThegamerOne/Nixos-Configeration.git /mnt/etc/nixos
+```
+
+### 4. Replace the placeholder hardware config
+
+The repo's `hardware-configuration.nix` was generated on a different machine. Overwrite it with yours from step 2:
+
+```sh
+nixos-generate-config --root /mnt --show-hardware-config > /mnt/etc/nixos/hardware-configuration.nix
+```
+
+### 5. Review the system config
+
+```sh
+nano /mnt/etc/nixos/configuration.nix
+```
+
+Change at minimum:
+
+- `networking.hostName` — your machine name
+- `time.timeZone` — e.g. `Australia/Sydney`
+- `i18n.defaultLocale` — e.g. `en_AU.UTF-8`
+- user name / `initialPassword`
+- uncomment the NVIDIA block **only** if you have an NVIDIA GPU
+
+Everything else is ready as-is.
+
+### 6. Install
+
+```sh
+nixos-install --flake /mnt/etc/nixos#nixos --accept-flake-config
+```
+
+`--accept-flake-config` is important: it trusts the CachyOS binary cache so the kernel is downloaded, not compiled.
+
+### 7. Reboot and set your password
+
+```sh
+reboot
+# after login:
+passwd
+```
+
+### 8. Install the user dotfiles
+
+From the cloned repo (now at `/etc/nixos`):
+
+```sh
+cd /etc/nixos
+./install.sh
+```
+
+This copies your fastfetch, Ghostty, Konsole, KDE Plasma and zsh configs into `$HOME`, backs up anything it replaces, and refreshes the font/KDE caches. See [Dotfiles](#-dotfiles).
+
+### 9. Verify
+
+Open a new Ghostty window — you should see the TokyoNight Storm theme, Nerd Font icons, and `fastfetch` on startup. Check with:
+
+```sh
+fastfetch
+gh auth status
+```
+
+---
+
+## 🗂️ Dotfiles
+
+[`install.sh`](install.sh) is the one-command way to move your user config onto any NixOS install.
+
+```sh
+./install.sh          # install everything
+./install.sh --help   # show what it does
+```
+
+| Source in repo | Destination |
+| --- | --- |
+| `dotfiles/fastfetch/config.jsonc` + logo | `~/.config/fastfetch/` |
+| `dotfiles/ghostty/config` | `~/.config/ghostty/config` |
+| `dotfiles/konsole/NerdFont.profile` | `~/.local/share/konsole/` |
+| `dotfiles/konsole/konsolerc` | `~/.config/konsolerc` |
+| `dotfiles/kde/*` | `~/.config/` |
+| `dotfiles/kde/color-schemes/TokyoNight.colors` | `~/.local/share/color-schemes/` |
+| `dotfiles/zshrc` | `~/.zshrc` |
+
+Existing files are saved as `<file>.bak.<timestamp>` before being replaced. After copying, the script runs `fc-cache -f` and `kbuildsycoca6 --noincremental` so fonts and the KDE launcher pick everything up immediately.
+
+> The KDE files contain layout, themes and shortcuts only — no wallet, mail or SSH config is committed.
+
+---
+
+## 🔄 Move to a new machine
+
+1. **On the old machine**, push your latest system config:
    ```sh
-   nixos-generate-config --root /mnt
+   nixos-push "describe what changed"
    ```
-
-2. Clone this repo and replace the machine-specific hardware config with your generated one:
-
+2. If you tweaked user configs, copy them into the repo first:
    ```sh
-   git clone https://github.com/AJThegamerOne/Nixos-Configeration.git /mnt/etc/nixos
-   nixos-generate-config --root /mnt --show-hardware-config > /mnt/etc/nixos/hardware-configuration.nix
+   cp ~/.config/fastfetch/config.jsonc /etc/nixos/dotfiles/fastfetch/
+   cp ~/.config/ghostty/config /etc/nixos/dotfiles/ghostty/
+   cp ~/.config/konsolerc /etc/nixos/dotfiles/konsole/
+   cp ~/.config/k* ~/.config/plasma* /etc/nixos/dotfiles/kde/
+   cp ~/.local/share/color-schemes/TokyoNight.colors /etc/nixos/dotfiles/kde/color-schemes/
+   cp ~/.zshrc /etc/nixos/dotfiles/
+   nixos-push "sync dotfiles"
    ```
-
-3. Edit [`configuration.nix`](configuration.nix):
-
-   - `networking.hostName`
-   - `time.timeZone`
-   - user name / `initialPassword` (change after first login)
-   - uncomment the NVIDIA section if you have an NVIDIA GPU
-
-4. Install:
-
+3. **On the new machine**, follow [Clean install](#-clean-install), then run `./install.sh`.
+4. Log in with GitHub CLI once so `nixos-push` works there:
    ```sh
-   nixos-install --flake /mnt/etc/nixos#nixos --accept-flake-config
-   ```
-
-   `--accept-flake-config` trusts the CachyOS kernel binary cache, so you don't compile a kernel.
-
-5. Reboot, then change your password:
-
-   ```sh
-   passwd
-   ```
-
-6. Optional — restore the user dotfiles:
-
-   ```sh
-   cp -r dotfiles/fastfetch/* ~/.config/fastfetch/
-   cp -r dotfiles/ghostty/* ~/.config/ghostty/
-   mkdir -p ~/.local/share/konsole ~/.local/share/color-schemes
-   cp dotfiles/konsole/* ~/.local/share/konsole/
-   cp dotfiles/konsole/konsolerc ~/.config/konsolerc
-   cp dotfiles/kde/k* dotfiles/kde/plasma* ~/.config/
-   cp dotfiles/kde/color-schemes/TokyoNight.colors ~/.local/share/color-schemes/
-   cp dotfiles/zshrc ~/.zshrc
-   fc-cache -f
-   kbuildsycoca6 --noincremental
+   gh auth login
    ```
 
 ---
@@ -112,6 +201,7 @@ sudo nixos-rebuild switch --flake /etc/nixos#nixos
 
 ```text
 .
+├── install.sh                 # installs all user dotfiles into $HOME
 ├── flake.nix                  # flake inputs and nixosConfigurations
 ├── flake.lock                 # pinned input revisions
 ├── configuration.nix          # the main system config
@@ -132,13 +222,12 @@ sudo nixos-rebuild switch --flake /etc/nixos#nixos
 
 ## 📝 Notes
 
-- [`hardware-configuration.nix`](hardware-configuration.nix) was generated on the original machine — replace it before installing on different hardware.
+- [`hardware-configuration.nix`](hardware-configuration.nix) was generated on the original machine — step 4 replaces it.
 - `system.stateVersion` is set once at install; don't change it afterwards.
 - To update Helium, bump `version` and `hash` in [`pkgs/helium.nix`](pkgs/helium.nix). Get the hash with `nix hash convert --to sri <hex>` from the release asset digest.
 - Helium's Widevine CDM is symlinked from nixpkgs `widevine-cdm` (the one Google Chrome uses).
 - The CachyOS binary cache (`cache.lantian.pub/lantian`) is configured in `configuration.nix`.
 - After adding/removing packages that provide `.desktop` files, refresh the KDE launcher cache with `kbuildsycoca6 --noincremental`.
-- KDE dotfiles contain layout, themes, and shortcuts only — no wallet, mail, or SSH config is committed.
 
 ---
 
