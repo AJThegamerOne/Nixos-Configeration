@@ -130,6 +130,8 @@
     binfmt = true;
   };
   programs.obs-studio.enable = true;
+  programs.nix-index-database.comma.enable = true; # `, cmd` runs missing commands from nixpkgs
+  programs.command-not-found.enable = false;
   environment.sessionVariables.NIXOS_OZONE_WL = "1"; # Wayland-native Electron apps where supported
 
   # --- Gaming ---------------------------------------------------------------------

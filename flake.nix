@@ -14,9 +14,15 @@
       url = "github:eklonofficial/Vice";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Prebuilt nix-index database for comma/nix-locate
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nix-cachyos-kernel, vice, ... }@inputs: {
+  outputs = { self, nixpkgs, nix-cachyos-kernel, vice, nix-index-database, ... }@inputs: {
     # Build/install with:  nixos-rebuild switch --flake .#nixos
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
@@ -31,6 +37,9 @@
 
         # Adds the services.vice.* options (enabled in configuration.nix)
         vice.nixosModules.default
+
+        # Prebuilt nix-index DB for comma (` , <cmd>`) and nix-locate
+        nix-index-database.nixosModules.nix-index
       ];
     };
   };
