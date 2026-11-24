@@ -1,6 +1,13 @@
 { config, pkgs, lib, inputs, ... }:
 
 {
+  # Quick map:
+  # - Boot/kernel: boot.*
+  # - Networking/locale: networking.*, i18n.*, time.*
+  # - Desktop/audio: services.xserver.*, services.desktopManager.*, services.pipewire.*
+  # - Hardware/GPU: hardware.*
+  # - User/Nix: users.users.*, nix.*
+  # - Gaming/apps: programs.steam/gamescope/gamemode, environment.systemPackages
   imports = [ ./hardware-configuration.nix ];
 
   # --- Boot (UEFI) -----------------------------------------------------------
@@ -34,6 +41,7 @@
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
+  programs.xwayland.enable = true; # X11 app compatibility on Wayland
   # Prefer GNOME? Comment the two lines above and uncomment these:
   # services.xserver.displayManager.gdm.enable = true;
   # services.xserver.desktopManager.gnome.enable = true;
