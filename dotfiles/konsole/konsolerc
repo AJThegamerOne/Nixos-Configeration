@@ -1,0 +1,11 @@
+[General]
+ConfigVersion=1
+
+[Notification Messages]
+CloseAllTabs=true
+
+[UiSettings]
+ColorScheme=
+
+[Desktop Session 1]
+DefaultProfile=NerdFont.profile

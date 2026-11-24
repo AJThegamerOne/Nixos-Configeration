@@ -1,0 +1,11 @@
+# Ghostty terminal configuration
+
+# Font — Hack Nerd Font for icons (fastfetch, starship)
+font-family = Hack Nerd Font Mono
+font-size = 12
+
+# Theme / appearance
+theme = TokyoNight Storm
+
+# fastfetch runs automatically via ~/.zshrc on every new interactive shell
+shell-integration = zsh

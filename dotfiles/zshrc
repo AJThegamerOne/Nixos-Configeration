@@ -1,0 +1,8 @@
+
+# opencode
+export PATH=/home/aj/.opencode/bin:$PATH
+
+# Run fastfetch on interactive terminal startup
+if [[ -o interactive && -t 0 && -t 1 ]] && command -v fastfetch >/dev/null 2>&1; then
+  fastfetch
+fi

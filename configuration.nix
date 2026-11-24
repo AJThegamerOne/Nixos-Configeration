@@ -30,17 +30,18 @@
   boot.kernel.sysctl."vm.max_map_count" = 2147483642; # Proton/Wine/esync games need high map count
 
   # --- Networking ------------------------------------------------------------
-  networking.hostName = "nixos"; # pick your hostname
+  networking.hostName = "aj"; # pick your hostname
   networking.networkmanager.enable = true;
 
   # --- Locale ----------------------------------------------------------------
-  # time.timeZone = "America/New_York"; # set your timezone
-  i18n.defaultLocale = "en_US.UTF-8";
-
+  time.timeZone = "Australia/Sydney"; # set your timezone
+  i18n.defaultLocale = "en_AU.UTF-8";
   # --- Desktop: KDE Plasma 6 (CachyOS's default) ------------------------------
   services.xserver.enable = true;
   services.displayManager.sddm.enable = true;
   services.desktopManager.plasma6.enable = true;
+  # Remove the KDE PIM suite (Kontact, KMail, Akonadi, etc.)
+  programs.kde-pim.enable = false;
   programs.xwayland.enable = true; # X11 app compatibility on Wayland
   # Prefer GNOME? Comment the two lines above and uncomment these:
   # services.xserver.displayManager.gdm.enable = true;
@@ -145,6 +146,17 @@
   # --- Nix settings -------------------------------------------------------------
   nixpkgs.config.allowUnfree = true; # steam, discord, lunar-client, zoom
 
+  # Flatpak (Nightcap is installed from its official Flatpak bundle).
+  services.flatpak.enable = true;
+
+  # Vencord for Discord (NixOS-native: the store copy is read-only, so the
+  # official installer cannot patch it in place).
+  nixpkgs.overlays = [
+    (final: prev: {
+      discord = prev.discord.override { withVencord = true; };
+    })
+  ];
+
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store = true;
@@ -200,6 +212,7 @@
     faugus-launcher # Windows games via UMU-Launcher
     (callPackage ./pkgs/helium.nix { }) # Helium browser (official AppImage)
     (callPackage ./pkgs/zuno.nix { }) # Zuno YouTube Music desktop client (official AppImage)
+    fastfetch # CLI system info
     discord
     prismlauncher # Minecraft
     lunar-client # Minecraft PvP client
@@ -208,6 +221,21 @@
     goverlay # GUI for MangoHud/GameMode/vkBasalt config
     opencode # AI coding agent
     zoom-us
+    git # version control (git clone, etc.)
+    gh # GitHub CLI (authenticate pushes to GitHub)
+    google-chrome # Google Chrome browser
+    ghostty # GPU-accelerated terminal
+    (nerd-fonts.hack) # Nerd Font for terminal icons (fastfetch, starship)
+
+    # One-command system update: refresh flake inputs and rebuild.
+    (writeShellScriptBin "nixos-update" ''
+      set -e
+      echo "==> Updating NixOS flake inputs..."
+      sudo nix flake update --flake /etc/nixos
+      echo "==> Rebuilding and switching..."
+      sudo nixos-rebuild switch --flake /etc/nixos#nixos
+      echo "==> Done. NixOS is up to date."
+    '')
   ];
 
   # Set once at install time; do not change after installing.
