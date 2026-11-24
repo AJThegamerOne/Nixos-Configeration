@@ -236,6 +236,26 @@
       sudo nixos-rebuild switch --flake /etc/nixos#nixos
       echo "==> Done. NixOS is up to date."
     '')
+    (writeShellScriptBin "nixos-push" ''
+      set -e
+      if [ $# -eq 0 ]; then
+        echo "Usage: nixos-push <commit message>"
+        exit 1
+      fi
+      cd /etc/nixos
+      echo "==> Staging changes..."
+      sudo git add -A
+      if git diff --cached --quiet; then
+        echo "==> Nothing to commit."
+      else
+        echo "==> Committing..."
+        sudo git commit -m "$*"
+      fi
+      echo "==> Pushing to GitHub..."
+      token=$(gh auth token)
+      sudo env GH_TOKEN="$token" git push origin main
+      echo "==> Done. GitHub is up to date."
+    '')
   ];
 
   # Set once at install time; do not change after installing.
