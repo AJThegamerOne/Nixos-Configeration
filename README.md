@@ -39,18 +39,25 @@ Built declaratively with flakes: pinned inputs in [`flake.lock`](flake.lock), ma
 ## 🚀 Clean install
 
 > What you need: a NixOS installer USB, an internet connection, and a disk you're happy to wipe.
+>
+> The commands below are **AJ's actual setup** — real disk UUIDs, hostname, username and locale. Run them as-is on AJ's machine. If you're installing this config on your own machine, see the "Using this on your own machine" note in step 1.
 
-### 1. Boot the installer and mount your disks
+### 1. Boot the installer and mount the disks
 
-Partition and mount your target disks under `/mnt`. For the reference UEFI + Btrfs layout:
+AJ's layout: one Btrfs partition for `/`, `/nix` and `/home` (as subvolumes), plus an EFI boot partition. No swap partition — zram handles swap.
 
 ```sh
-mount /dev/disk/by-uuid/YOUR-ROOT-UUID /mnt
-mount /dev/disk/by-uuid/YOUR-BOOT-UUID /mnt/boot
-mount -o subvol=nix /dev/disk/by-uuid/YOUR-ROOT-UUID /mnt/nix
-mount -o subvol=home /dev/disk/by-uuid/YOUR-ROOT-UUID /mnt/home
-swapon /dev/disk/by-uuid/YOUR-SWAP-UUID   # if using a swap partition
+ROOT=d7d3a276-4e8b-43de-b71a-fb9725038d3e
+BOOT=8762-B735
+
+mount "/dev/disk/by-uuid/$ROOT" /mnt
+mkdir -p /mnt/boot /mnt/nix /mnt/home
+mount -o subvol=nix "/dev/disk/by-uuid/$ROOT" /mnt/nix
+mount -o subvol=home "/dev/disk/by-uuid/$ROOT" /mnt/home
+mount "/dev/disk/by-uuid/$BOOT" /mnt/boot
 ```
+
+> **Using this on your own machine?** Replace `ROOT` and `BOOT` with your own UUIDs (`lsblk -f` shows them), change the subvolume names if yours differ, and adjust the hostname, username (`users.users.aj`), timezone and locale in step 5. The commands are written for AJ's machine by default so they can be copy-pasted without editing.
 
 ### 2. Generate a hardware config for this machine
 
@@ -67,9 +74,9 @@ mkdir -p /mnt/etc
 git clone https://github.com/AJThegamerOne/Nixos-Configeration.git /mnt/etc/nixos
 ```
 
-### 4. Replace the placeholder hardware config
+### 4. Replace the repo's hardware config with yours
 
-The repo's `hardware-configuration.nix` was generated on a different machine. Overwrite it with yours from step 2:
+The committed `hardware-configuration.nix` was generated on AJ's machine. Overwrite it with the one from step 2:
 
 ```sh
 nixos-generate-config --root /mnt --show-hardware-config > /mnt/etc/nixos/hardware-configuration.nix
@@ -81,15 +88,15 @@ nixos-generate-config --root /mnt --show-hardware-config > /mnt/etc/nixos/hardwa
 nano /mnt/etc/nixos/configuration.nix
 ```
 
-Change at minimum:
+AJ's values are already set:
 
-- `networking.hostName` — your machine name
-- `time.timeZone` — e.g. `Australia/Sydney`
-- `i18n.defaultLocale` — e.g. `en_AU.UTF-8`
-- user name / `initialPassword`
-- uncomment the NVIDIA block **only** if you have an NVIDIA GPU
+- `networking.hostName = "aj"`
+- `time.timeZone = "Australia/Sydney"`
+- `i18n.defaultLocale = "en_AU.UTF-8"`
+- `users.users.aj` with `extraGroups = [ "networkmanager" "wheel" "video" "input" ]`
+- `initialPassword = "changeme"` — change with `passwd` after first login
 
-Everything else is ready as-is.
+> On your own machine, change the hostname, the `users.users.aj` attribute (rename `aj` to your username), timezone, locale and initial password. Uncomment the NVIDIA block **only** if you have an NVIDIA GPU.
 
 ### 6. Install
 
@@ -222,7 +229,7 @@ sudo nixos-rebuild switch --flake /etc/nixos#nixos
 
 ## 📝 Notes
 
-- [`hardware-configuration.nix`](hardware-configuration.nix) was generated on the original machine — step 4 replaces it.
+- [`hardware-configuration.nix`](hardware-configuration.nix) was generated on AJ's machine — step 4 replaces it with yours.
 - `system.stateVersion` is set once at install; don't change it afterwards.
 - To update Helium, bump `version` and `hash` in [`pkgs/helium.nix`](pkgs/helium.nix). Get the hash with `nix hash convert --to sri <hex>` from the release asset digest.
 - Helium's Widevine CDM is symlinked from nixpkgs `widevine-cdm` (the one Google Chrome uses).
