@@ -94,7 +94,7 @@
   users.users.aj = {
     isNormalUser = true;
     description = "AJ";
-    extraGroups = [ "networkmanager" "wheel" "video" "input" ];
+    extraGroups = [ "networkmanager" "wheel" "video" "input" "libvirtd" ];
     initialPassword = "changeme"; # change after first login: passwd
     shell = pkgs.zsh;
   };
@@ -190,6 +190,17 @@
   programs.nix-index-database.comma.enable = true; # `, cmd` runs missing commands from nixpkgs
   programs.command-not-found.enable = false;
   environment.sessionVariables.NIXOS_OZONE_WL = "1"; # Wayland-native Electron apps where supported
+
+  # --- Virtualization ---------------------------------------------------------
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      swtpm.enable = true; # TPM 2.0 support for Windows 11 guests
+      vhostUserPackages = [ pkgs.virtiofsd ]; # shared folder support
+    };
+  };
+  programs.virt-manager.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true; # USB passthrough in SPICE guests
 
   # --- Gaming ---------------------------------------------------------------------
   programs.steam = {
