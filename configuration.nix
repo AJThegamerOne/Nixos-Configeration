@@ -222,6 +222,7 @@
     goverlay # GUI for MangoHud/GameMode/vkBasalt config
     opencode # AI coding agent
     zoom-us
+    spotifast # native Spotify client (Rust, lightweight)
     git # version control (git clone, etc.)
     gh # GitHub CLI (authenticate pushes to GitHub)
     google-chrome # Google Chrome browser

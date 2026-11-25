@@ -27,7 +27,7 @@
 | 🔊 **Audio** | PipeWire with Pulse/ALSA/JACK bridge, 32-bit ALSA, high-quality resampling, RTKit |
 | 🧰 **Hardware** | AMD microcode, redistributable firmware, 32-bit graphics, Steam udev rules, Bluetooth, fwupd |
 | 🌐 **Browsers** | Helium (with Chrome's Widevine CDM), Google Chrome, Zuno for YouTube Music |
-| 💬 **Apps** | Discord with Vencord baked in via overlay, Vesktop, Ghostty, fastfetch, Git, Prism Launcher, Lunar Client, Zoom, OpenCode |
+| 💬 **Apps** | Discord with Vencord baked in via overlay, Vesktop, Spotifast, Ghostty, fastfetch, Git, Prism Launcher, Lunar Client, Zoom, OpenCode |
 | 📦 **Extras** | Flatpak with Nightcap, Vice instant replay, `nix-index-database` for `comma`/`nix-locate`, `nix-ld` |
 | ⌨️ **Terminal** | Ghostty on **TokyoNight Storm** with **Hack Nerd Font**; `fastfetch` launches automatically with every interactive shell |
 | 🗂️ **Dotfiles** | fastfetch, Ghostty, Konsole, KDE Plasma (incl. TokyoNight color scheme) and zsh configs — installed with one script |
