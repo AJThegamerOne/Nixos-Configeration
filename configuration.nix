@@ -24,6 +24,16 @@
   #   linuxPackages-cachyos-bore-lto-x86_64-v3  (Clang + ThinLTO, may take longer if uncached)
   # Full list: https://github.com/xddxdd/nix-cachyos-kernel
   boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-x86_64-v3;
+  # Workaround for amdgpu/DC advertising DRM_FORMAT_RGBA8888 (RA24) but rejecting it,
+  # which causes KWin/SDDM Wayland modeset loops on affected AMD GPUs (e.g. RX 9060 XT).
+  # Upstream tracking: https://gitlab.freedesktop.org/drm/amd/-/work_items/5339
+  # Remove once the proper RGBA8888 DC support lands in the kernel.
+  boot.kernelPatches = [
+    {
+      name = "amdgpu-ra24-fix";
+      patch = ./patches/amdgpu-ra24-fix.patch;
+    }
+  ];
   boot.kernelModules = [ "ntsync" ]; # Wine/Proton NT synchronization (faster Windows games)
 
   # Gaming/performance tuning
