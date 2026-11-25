@@ -214,6 +214,7 @@
     (callPackage ./pkgs/zuno.nix { }) # Zuno YouTube Music desktop client (official AppImage)
     fastfetch # CLI system info
     discord
+    vesktop # lightweight Discord client with Vencord built in
     prismlauncher # Minecraft
     lunar-client # Minecraft PvP client
     protonplus # Proton-GE / Wine-GE manager
