@@ -27,7 +27,7 @@
   # Workaround for amdgpu/DC advertising DRM_FORMAT_RGBA8888 (RA24) but rejecting it,
   # which causes KWin/SDDM Wayland modeset loops on affected AMD GPUs (e.g. RX 9060 XT).
   # Upstream tracking: https://gitlab.freedesktop.org/drm/amd/-/work_items/5339
-  # Remove once the proper RGBA8888 DC support lands in the kernel.
+  # temp workaround, might remove this later if it gets fixed upstream
   boot.kernelPatches = [
     {
       name = "amdgpu-ra24-fix";
