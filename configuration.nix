@@ -43,6 +43,18 @@
   networking.hostName = "aj"; # pick your hostname
   networking.networkmanager.enable = true;
 
+  # DNS over TLS (Quad9)
+  services.resolved = {
+    enable = true;
+    settings.Resolve = {
+      DNSSEC = "true";
+      DNSOverTLS = "true";
+      MulticastDNS = "false";
+      FallbackDNS = [ "9.9.9.9" "149.112.112.112" ];
+    };
+  };
+  networking.nameservers = [ "9.9.9.9#dns.quad9.net" "149.112.112.112#dns.quad9.net" ];
+
   # --- Locale ----------------------------------------------------------------
   time.timeZone = "Australia/Sydney"; # set your timezone
   i18n.defaultLocale = "en_AU.UTF-8";
