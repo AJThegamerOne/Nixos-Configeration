@@ -72,6 +72,7 @@
 
   # --- Sound (PipeWire) -------------------------------------------------------
   security.rtkit.enable = true;
+  security.apparmor.enable = true;
   services.pulseaudio.enable = false;
   services.pipewire = {
     enable = true;
@@ -203,7 +204,17 @@
   hardware.bluetooth.powerOnBoot = true;
   hardware.bluetooth.settings.General.Experimental = true; # better BT codec/device compatibility
   services.fwupd.enable = true;
-  zramSwap.enable = true;
+  services.fstrim.enable = true; # periodic TRIM for SSD/NVMe
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 50;
+  };
+  systemd.oomd.enable = true; # better behavior under memory pressure
+  services.journald.settings.Journal = {
+    SystemMaxUse = "1G";
+    MaxRetentionSec = "1month";
+  };
   programs.nix-ld.enable = true; # run unpackaged binaries more easily
   programs.appimage = {
     enable = true;
