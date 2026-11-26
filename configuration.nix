@@ -42,6 +42,7 @@
   # --- Networking ------------------------------------------------------------
   networking.hostName = "aj"; # pick your hostname
   networking.networkmanager.enable = true;
+  networking.firewall.enable = true;
 
   # DNS over TLS (Quad9)
   services.resolved = {
