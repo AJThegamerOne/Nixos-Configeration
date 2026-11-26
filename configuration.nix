@@ -72,7 +72,6 @@
 
   # --- Sound (PipeWire) -------------------------------------------------------
   security.rtkit.enable = true;
-  security.apparmor.enable = true;
   services.pulseaudio.enable = false;
   services.pipewire = {
     enable = true;
