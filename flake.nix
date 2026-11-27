@@ -22,10 +22,9 @@
     };
 
     # Trivalent (secureblue hardened Chromium) with supply-chain verification
-    trivalent-nix = {
-      url = "github:hydroakri/trivalent-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # No nixpkgs.follows: trivalent-nix pins Fedora glibc; following our
+    # nixpkgs can cause runtime GLIBC mismatches (see README drift caveat).
+    trivalent-nix.url = "github:hydroakri/trivalent-nix";
   };
 
   outputs = { self, nixpkgs, nix-cachyos-kernel, vice, nix-index-database, trivalent-nix, ... }@inputs: {
