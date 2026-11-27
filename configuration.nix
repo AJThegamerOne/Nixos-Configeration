@@ -262,6 +262,10 @@
     ghostty # GPU-accelerated terminal
     pulseaudio # provides pactl/pacmd for PipeWire pulse compat
     (nerd-fonts.hack) # Nerd Font for terminal icons (fastfetch, starship)
+    brave
+    gnutar
+    steam-run
+    amnezia-vpn
 
     # One-command system update: refresh flake inputs, rebuild, then push the
     # resulting flake/config changes to GitHub.
