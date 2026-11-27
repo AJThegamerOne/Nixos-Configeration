@@ -20,9 +20,15 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Trivalent (secureblue hardened Chromium) with supply-chain verification
+    trivalent-nix = {
+      url = "github:hydroakri/trivalent-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nix-cachyos-kernel, vice, nix-index-database, ... }@inputs: {
+  outputs = { self, nixpkgs, nix-cachyos-kernel, vice, nix-index-database, trivalent-nix, ... }@inputs: {
     # Build/install with:  nixos-rebuild switch --flake .#nixos
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
@@ -40,6 +46,9 @@
 
         # Prebuilt nix-index DB for comma (` , <cmd>`) and nix-locate
         nix-index-database.nixosModules.nix-index
+
+        # Trivalent (secureblue hardened Chromium)
+        trivalent-nix.nixosModules.default
       ];
     };
   };
