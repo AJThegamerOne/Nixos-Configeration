@@ -260,6 +260,7 @@
     gh # GitHub CLI (authenticate pushes to GitHub)
     google-chrome # Google Chrome browser
     ghostty # GPU-accelerated terminal
+    pulseaudio # provides pactl/pacmd for PipeWire pulse compat
     (nerd-fonts.hack) # Nerd Font for terminal icons (fastfetch, starship)
 
     # One-command system update: refresh flake inputs, rebuild, then push the
