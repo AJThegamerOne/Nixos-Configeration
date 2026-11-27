@@ -180,6 +180,7 @@
   programs.obs-studio.enable = true;
   programs.nix-index-database.comma.enable = true; # `, cmd` runs missing commands from nixpkgs
   programs.command-not-found.enable = false;
+  programs.trivalent.enable = true; # secureblue hardened Chromium (replaces Google Chrome)
   environment.sessionVariables.NIXOS_OZONE_WL = "1"; # Wayland-native Electron apps where supported
 
   # --- Virtualization ---------------------------------------------------------
@@ -228,10 +229,13 @@
     spotifast # native Spotify client (Rust, lightweight)
     git # version control (git clone, etc.)
     gh # GitHub CLI (authenticate pushes to GitHub)
-    google-chrome # Google Chrome browser
     ghostty # GPU-accelerated terminal
     pulseaudio # provides pactl/pacmd for PipeWire pulse compat
     (nerd-fonts.hack) # Nerd Font for terminal icons (fastfetch, starship)
+    brave
+    gnutar
+    steam-run
+    amnezia-vpn
 
     # One-command system update: refresh flake inputs, rebuild, then push the
     # resulting flake/config changes to GitHub.

@@ -20,9 +20,14 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Trivalent (secureblue hardened Chromium) with supply-chain verification
+    # No nixpkgs.follows: trivalent-nix pins Fedora glibc; following our
+    # nixpkgs can cause runtime GLIBC mismatches (see README drift caveat).
+    trivalent-nix.url = "github:hydroakri/trivalent-nix";
   };
 
-  outputs = { self, nixpkgs, nix-cachyos-kernel, vice, nix-index-database, ... }@inputs: {
+  outputs = { self, nixpkgs, nix-cachyos-kernel, vice, nix-index-database, trivalent-nix, ... }@inputs: {
     # Build/install with:  nixos-rebuild switch --flake .#nixos
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
@@ -40,6 +45,9 @@
 
         # Prebuilt nix-index DB for comma (` , <cmd>`) and nix-locate
         nix-index-database.nixosModules.nix-index
+
+        # Trivalent (secureblue hardened Chromium)
+        trivalent-nix.nixosModules.default
       ];
     };
   };
