@@ -26,6 +26,7 @@
 | 🎮 **Gaming** | Steam (Remote Play + firewall ports, Gamescope session), Gamemode, Gamescope `capSysNice`, MangoHud, Goverlay, Lutris, Faugus Launcher, ProtonPlus, Proton-GE |
 | 🔊 **Audio** | PipeWire with Pulse/ALSA/JACK bridge, 32-bit ALSA, high-quality resampling, RTKit |
 | 🧰 **Hardware** | AMD microcode, redistributable firmware, 32-bit graphics, Steam udev rules, Bluetooth, fwupd |
+| 🖥️ **Virtualization** | libvirt/QEMU/KVM, virt-manager, SPICE USB redirection, TPM 2.0 (swtpm), virtiofsd shared folders |
 | 🌐 **Browsers** | Helium (with Chrome's Widevine CDM), Google Chrome, Zuno for YouTube Music |
 | 💬 **Apps** | Discord with Vencord baked in via overlay, Vesktop, Spotifast, Ghostty, fastfetch, Git, Prism Launcher, Lunar Client, Zoom, OpenCode |
 | 📦 **Extras** | Flatpak with Nightcap, Vice instant replay, `nix-index-database` for `comma`/`nix-locate`, `nix-ld` |
