@@ -24,6 +24,16 @@
   #   linuxPackages-cachyos-bore-lto-x86_64-v3  (Clang + ThinLTO, may take longer if uncached)
   # Full list: https://github.com/xddxdd/nix-cachyos-kernel
   boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-bore-x86_64-v3;
+  # Workaround for amdgpu/DC advertising DRM_FORMAT_RGBA8888 (RA24) but rejecting it,
+  # which causes KWin/SDDM Wayland modeset loops on affected AMD GPUs (e.g. RX 9060 XT).
+  # Upstream tracking: https://gitlab.freedesktop.org/drm/amd/-/work_items/5339
+  # temp workaround, might remove this later if it gets fixed upstream
+  boot.kernelPatches = [
+    {
+      name = "amdgpu-ra24-fix";
+      patch = ./patches/amdgpu-ra24-fix.patch;
+    }
+  ];
   boot.kernelModules = [ "ntsync" ]; # Wine/Proton NT synchronization (faster Windows games)
 
   # Gaming/performance tuning
@@ -32,6 +42,19 @@
   # --- Networking ------------------------------------------------------------
   networking.hostName = "aj"; # pick your hostname
   networking.networkmanager.enable = true;
+  networking.firewall.enable = true;
+
+  # DNS over TLS (Quad9)
+  services.resolved = {
+    enable = true;
+    settings.Resolve = {
+      DNSSEC = "true";
+      DNSOverTLS = "true";
+      MulticastDNS = "false";
+      FallbackDNS = [ "9.9.9.9" "149.112.112.112" ];
+    };
+  };
+  networking.nameservers = [ "9.9.9.9#dns.quad9.net" "149.112.112.112#dns.quad9.net" ];
 
   # --- Locale ----------------------------------------------------------------
   time.timeZone = "Australia/Sydney"; # set your timezone
@@ -180,7 +203,17 @@
   hardware.bluetooth.powerOnBoot = true;
   hardware.bluetooth.settings.General.Experimental = true; # better BT codec/device compatibility
   services.fwupd.enable = true;
-  zramSwap.enable = true;
+  services.fstrim.enable = true; # periodic TRIM for SSD/NVMe
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 50;
+  };
+  systemd.oomd.enable = true; # better behavior under memory pressure
+  services.journald.settings.Journal = {
+    SystemMaxUse = "1G";
+    MaxRetentionSec = "1month";
+  };
   programs.nix-ld.enable = true; # run unpackaged binaries more easily
   programs.appimage = {
     enable = true;
@@ -227,6 +260,7 @@
     gh # GitHub CLI (authenticate pushes to GitHub)
     google-chrome # Google Chrome browser
     ghostty # GPU-accelerated terminal
+    pulseaudio # provides pactl/pacmd for PipeWire pulse compat
     (nerd-fonts.hack) # Nerd Font for terminal icons (fastfetch, starship)
 
     # One-command system update: refresh flake inputs, rebuild, then push the
