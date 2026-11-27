@@ -247,6 +247,7 @@
     (callPackage ./pkgs/zuno.nix { }) # Zuno YouTube Music desktop client (official AppImage)
     fastfetch # CLI system info
     discord
+    vesktop # lightweight Discord client with Vencord built in
     prismlauncher # Minecraft
     lunar-client # Minecraft PvP client
     protonplus # Proton-GE / Wine-GE manager
@@ -254,20 +255,25 @@
     goverlay # GUI for MangoHud/GameMode/vkBasalt config
     opencode # AI coding agent
     zoom-us
+    spotifast # native Spotify client (Rust, lightweight)
     git # version control (git clone, etc.)
     gh # GitHub CLI (authenticate pushes to GitHub)
     google-chrome # Google Chrome browser
     ghostty # GPU-accelerated terminal
     (nerd-fonts.hack) # Nerd Font for terminal icons (fastfetch, starship)
 
-    # One-command system update: refresh flake inputs and rebuild.
+    # One-command system update: refresh flake inputs, rebuild, then push the
+    # resulting flake/config changes to GitHub.
     (writeShellScriptBin "nixos-update" ''
       set -e
       echo "==> Updating NixOS flake inputs..."
       sudo nix flake update --flake /etc/nixos
       echo "==> Rebuilding and switching..."
       sudo nixos-rebuild switch --flake /etc/nixos#nixos
-      echo "==> Done. NixOS is up to date."
+      echo "==> Pushing flake/config changes to GitHub..."
+      sudo -v
+      nixos-push "chore: nixos-update $(date +%Y-%m-%d)"
+      echo "==> Done. NixOS and GitHub are up to date."
     '')
     (writeShellScriptBin "nixos-push" ''
       set -e

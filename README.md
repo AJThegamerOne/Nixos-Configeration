@@ -27,7 +27,7 @@
 | 🔊 **Audio** | PipeWire with Pulse/ALSA/JACK bridge, 32-bit ALSA, high-quality resampling, RTKit |
 | 🧰 **Hardware** | AMD microcode, redistributable firmware, 32-bit graphics, Steam udev rules, Bluetooth, fwupd |
 | 🌐 **Browsers** | Helium (with Chrome's Widevine CDM), Google Chrome, Zuno for YouTube Music |
-| 💬 **Apps** | Discord with Vencord baked in via overlay, Ghostty, fastfetch, Git, Prism Launcher, Lunar Client, Zoom, OpenCode |
+| 💬 **Apps** | Discord with Vencord baked in via overlay, Vesktop, Spotifast, Ghostty, fastfetch, Git, Prism Launcher, Lunar Client, Zoom, OpenCode |
 | 📦 **Extras** | Flatpak with Nightcap, Vice instant replay, `nix-index-database` for `comma`/`nix-locate`, `nix-ld` |
 | ⌨️ **Terminal** | Ghostty on **TokyoNight Storm** with **Hack Nerd Font**; `fastfetch` launches automatically with every interactive shell |
 | 🗂️ **Dotfiles** | fastfetch, Ghostty, Konsole, KDE Plasma (incl. TokyoNight color scheme) and zsh configs — installed with one script |
@@ -189,8 +189,8 @@ Existing files are saved as `<file>.bak.<timestamp>` before being replaced. Afte
 
 | Command | What it does |
 | --- | --- |
-| `nixos-update` | Update flake inputs and rebuild/switch in one go |
-| `nixos-push "message"` | Stage, commit, and push changes to GitHub |
+| `nixos-update` | Update flake inputs, rebuild/switch, then commit and push to GitHub |
+| `nixos-push "message"` | Stage, commit, and push changes manually |
 | `sudo nixos-rebuild switch --flake /etc/nixos#nixos` | Rebuild after editing config |
 
 Manual equivalent of `nixos-update`:
@@ -198,9 +198,10 @@ Manual equivalent of `nixos-update`:
 ```sh
 sudo nix flake update --flake /etc/nixos
 sudo nixos-rebuild switch --flake /etc/nixos#nixos
+nixos-push "chore: nixos-update $(date +%Y-%m-%d)"
 ```
 
-`nixos-push` uses your `gh auth login` session for authentication.
+`nixos-update` pushes automatically with a dated commit message. `nixos-push` uses your `gh auth login` session for authentication.
 
 ---
 
